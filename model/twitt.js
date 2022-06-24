@@ -1,2 +1,25 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('postgres://postgres:postgres@localhost:26257/postgres');
+const sequelizeStream = require('node-sequelize-stream');
+const sequelize = new Sequelize('postgresql://root@localhost:26257/defaultdb?sslmode=disable');
+
+const Twitt = sequelize.define("Twitt", {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    nickname: {
+      type: Sequelize.STRING,
+    },
+    text: {
+      type: Sequelize.STRING,
+    },
+    createdAt: {
+      type: Sequelize.DATE,
+    },
+    updatedAt: {
+      type: Sequelize.DATE,
+    },
+  });
+  sequelizeStream(sequelize);
+  module.exports = Twitt;
