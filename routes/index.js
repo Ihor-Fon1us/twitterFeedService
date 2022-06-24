@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const stream = require('stream');
 
 const Sequelize = require('sequelize-cockroachdb');
 const sequelizeStream = require('node-sequelize-stream');
@@ -30,39 +31,27 @@ sequelizeStream(sequelize);
 
 
 Twitt.sync({
-  force: true,
+  force: false,
 })
 const eventEmitter = new EventEmitter();
 router.route('/posts')
 .get(async function(req, res) {
-  let timer = null;
+  
   res.setHeader('Content-Type', 'application/stream+json');
-  res.setHeader('Transfer-Encoding', 'chunked');
-  const stream = Twitt.findAllWithStream();
+  //res.setHeader('Transfer-Encoding', 'chunked');
+  res.setHeader('Connection', 'keep-alive');
   
-  stream.pipe(res);
-  const id = Date.now().toString();
-   const handler = function(event) {
-      clearTimeout(timer);
-      console.log('event', event);
-      res.status(201);
-      res.end( JSON.stringify(event));
-   };
+  const inputStream = Twitt.findAllWithStream({objectMode: true});
+  
+  inputStream.on('data', (data) => {
+    res.write(data);
+  }).on('end', () => {
+    console.log('end');
+  })
 
-   eventEmitter.register(id, handler);
-   timer = setTimeout(function(){ 
-      console.log('timeout');
-      const wasUnregistered = eventEmitter.unregister(id);
-      console.log("wasUnregistered", wasUnregistered);
-      if (wasUnregistered){
-         res.status(200);
-         res.end();
-      }
-   }, 5000);
-  
-  
   
 })  // GET all posts
+
 
 router.route('/post')
 .post(function(req, res) {
@@ -75,6 +64,9 @@ router.route('/post')
     res.send(twitt);
   }).catch(function(err) {
     res.send(err);
+  })
+  Twitt.afterCreate(function(twitt) {
+    eventEmitter.fire('newTwitt', twitt);
   })
 })  // POST a new post
 

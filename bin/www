@@ -17,7 +17,7 @@ server.on('listening', onListening);
 
 
 
-/*amqp.connect('amqp://localhost', function(error0, connection) {
+amqp.connect('amqp://localhost', function(error0, connection) {
   if (error0) {
     throw error0;
   }
@@ -26,7 +26,7 @@ server.on('listening', onListening);
       throw error1;
     }
   });
-});*/
+});
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
