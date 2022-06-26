@@ -5,6 +5,7 @@ const Ajv = require("ajv");
 const ajv = new Ajv();
 const { twittSchema } = require('../models/validator/validatorSchema');
 const { validate } = require('../services/validate');
+const { sendToQueue } = require('../services/rabbitmq/send');
 
 const hendlerGet = () => {
   return (req, res, next) => {
@@ -27,20 +28,20 @@ const hendlerGet = () => {
   }
 }
 
-const hendlerPost = () => {
-  return (req, res, next) => {
-    nickname = req.body.nickname;
-    text = req.body.text;
-    createdAt = new Date();
-    //hendler(nickname, text);
-    Twitt.create({
+/* Twitt.create({
       nickname: nickname,
       text: text,
+      createdAt: createdAt
     }).then(function(twitt) {
       res.send(twitt);
     }).catch(function(err) {
       res.send(err);
-    })
+    }) */
+
+const hendlerPost = () => {
+  return (req, res, next) => {
+    const data = {nickname: req.body.nickname, text: req.body.text, createdAt: new Date()}
+    sendToQueue('twitt', data);
   }
 }
 

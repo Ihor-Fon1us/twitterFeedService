@@ -19,18 +19,6 @@ server.on('listening', onListening);
 
 // const sequelize = new Sequelize('postgresql://root@localhost:26257/defaultdb?sslmode=disable');
 
-
-amqp.connect('amqp://localhost', function(error0, connection) {
-  if (error0) {
-    throw error0;
-  }
-  connection.createChannel(function(error1, channel) {
-    if (error1) {
-      throw error1;
-    }
-  });
-});
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
