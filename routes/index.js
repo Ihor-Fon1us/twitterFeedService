@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Twitt = require('../models/twitt');
-const Ajv = require("ajv");
-const ajv = new Ajv();
+
 const { twittSchema } = require('../models/validator/validatorSchema');
 const { validate } = require('../services/validate');
 const { sendToQueue } = require('../services/rabbitmq/send');

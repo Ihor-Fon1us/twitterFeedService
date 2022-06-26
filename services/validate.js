@@ -1,3 +1,6 @@
+const Ajv = require("ajv");
+const ajv = new Ajv();
+
 const validate = (schema) => {
     return (req, res, next) => {
       try {

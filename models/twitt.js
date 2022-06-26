@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
+const  sequelize = require('../db/cockroachdb/connect');
 const sequelizeStream = require('node-sequelize-stream');
-const sequelize = new Sequelize('postgresql://root@localhost:26257/defaultdb?sslmode=disable');
 
 const Twitt = sequelize.define("Twitt", {
     id: {
