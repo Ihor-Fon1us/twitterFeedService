@@ -22,4 +22,7 @@ const Twitt = sequelize.define("Twitt", {
     },
   });
   sequelizeStream(sequelize);
+  Twitt.sync({
+    force: false,
+  })
   module.exports = Twitt;

@@ -1,46 +1,53 @@
 const express = require('express');
 const router = express.Router();
+const Twitt = require('../models/twitt');
+const Ajv = require("ajv");
+const ajv = new Ajv();
+const { twittSchema } = require('../models/validator/validatorSchema');
+const { validate } = require('../services/validate');
 
-const Twitt = require('../model/twitt');
+const hendlerGet = () => {
+  return (req, res, next) => {
+    res.setHeader('Content-Type', 'application/stream+json');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Connection', 'keep-alive');
+    
+    const inputStream = Twitt.findAllWithStream({objectMode: true});
+    
+    inputStream.on('data', (data) => {
+      res.write(data);
+    })/* .on('end', () => {
+      console.log('end');
+    })  */
+    
+    Twitt.afterCreate(function(twitt) {
+      // console.log('afterCreate');
+      res.write(JSON.stringify(twitt));
+    })
+  }
+}
 
-Twitt.sync({
-  force: false,
-})
-
+const hendlerPost = () => {
+  return (req, res, next) => {
+    nickname = req.body.nickname;
+    text = req.body.text;
+    createdAt = new Date();
+    //hendler(nickname, text);
+    Twitt.create({
+      nickname: nickname,
+      text: text,
+    }).then(function(twitt) {
+      res.send(twitt);
+    }).catch(function(err) {
+      res.send(err);
+    })
+  }
+}
 
 router.route('/posts')
-.get(async function(req, res) {
-  res.setHeader('Content-Type', 'application/stream+json');
-  res.setHeader('Transfer-Encoding', 'chunked');
-  res.setHeader('Connection', 'keep-alive');
-  
-  const inputStream = Twitt.findAllWithStream({objectMode: true});
-  
-  inputStream.on('data', (data) => {
-    res.write(data);
-  })/* .on('end', () => {
-    console.log('end');
-  })  */
-  
-  Twitt.afterCreate(function(twitt) {
-    // console.log('afterCreate');
-    res.write(JSON.stringify(twitt));
-  })
-})  // GET all posts
+.get(hendlerGet())  // GET all posts
 
 router.route('/post')
-.post(function(req, res) {
-  nickname = req.body.nickname;
-  text = req.body.text;
-  Twitt.create({
-    nickname: nickname,
-    text: text,
-  }).then(function(twitt) {
-    res.send(twitt);
-  }).catch(function(err) {
-    res.send(err);
-  })
-  
-})  // POST a new post
+.post(validate(twittSchema), hendlerPost())  // POST a new post
 
 module.exports = router;

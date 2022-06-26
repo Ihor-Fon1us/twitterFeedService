@@ -4,6 +4,7 @@ const app = require('../app');
 const debug = require('debug')('twitterfeedservice:server');
 const http = require('http');
 const amqp = require('amqplib/callback_api');
+const Sequelize = require('sequelize');
 
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -15,6 +16,8 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+// const sequelize = new Sequelize('postgresql://root@localhost:26257/defaultdb?sslmode=disable');
 
 
 amqp.connect('amqp://localhost', function(error0, connection) {
