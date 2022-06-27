@@ -15,7 +15,7 @@ services:
       - 5672:5672
       - 15672:15672
 
- roach1:
+ cockroach1:
    image: cockroachdb/cockroach:v22.1.1
    container_name: cockroach1
    hostname: cockroach1
@@ -28,7 +28,7 @@ services:
    volumes:
      - "${PWD}/cockroach-data/roach1:/cockroach/cockroach-data"
 
- roach2:
+ cockroach2:
    image: cockroachdb/cockroach:v22.1.1
    container_name: cockroach2
    hostname: cockroach2
@@ -38,7 +38,7 @@ services:
    volumes:
      - "${PWD}/cockroach-data/roach2:/cockroach/cockroach-data" 
 
- roach3:
+ cockroach3:
    image: cockroachdb/cockroach:v22.1.1
    container_name: cockroach3
    hostname: cockroach3
