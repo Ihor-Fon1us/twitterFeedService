@@ -1,5 +1,5 @@
 FROM node:16.14.0
-WORKDIR /usr/src/app/
+WORKDIR /usr/src/bot/
 COPY . ./
 RUN npm ci
 EXPOSE 8082
