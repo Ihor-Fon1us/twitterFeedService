@@ -24,6 +24,8 @@ services:
     - "8082:8082"
    networks:
      - roachnet
+   environment:
+     - SERVER_BASE_URL=http://server:8080
 
  rabbitmq:
    container_name: rabbitmq
