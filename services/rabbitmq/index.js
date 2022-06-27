@@ -16,7 +16,7 @@ class RABBITMQ {
             this.channel = await this.connection.createChannel();
             await this.channel.assertQueue(queueName);
             this.channel.consume(queueName, (msg) => {
-                Twitt.create(msg.content.toString());
+                Twitt.create(JSON.parse(msg.content.toString()));
                 this.channel.ack(msg);
                })
         } catch (err){
@@ -31,11 +31,6 @@ class RABBITMQ {
         } catch (err){
             console.error(err);
         }
-    }
-    async receiveData () {
-        return this.channel.consume(queueName, (msg) => {
-            return msg.content.toJSON();
-        })
     }
 }
 module.exports = new RABBITMQ()

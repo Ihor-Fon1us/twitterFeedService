@@ -31,6 +31,7 @@ const hendlerPost = () => {
       text: req.body.text, 
       createdAt: new Date()
     }
+    
     RABBITMQ.postData(data)
     .then(res.send(JSON.stringify(data)));
   }
