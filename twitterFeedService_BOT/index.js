@@ -2,8 +2,10 @@ const request = require('request');
 
 const time = process.env.TIME || 10;
 
+const baseUrl = process.env.SERVER_BASE_URL || 'http://localhost:3000';
+
 const options = {
-  url: 'http://localhost:3000/post',
+  url: `${baseUrl}/post`,
   json: true,
   body: {
     nickname: 'Bot',
