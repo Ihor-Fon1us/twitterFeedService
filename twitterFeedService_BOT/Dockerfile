@@ -3,4 +3,4 @@ WORKDIR /usr/src/app/
 COPY package*.json ./
 RUN npm ci
 EXPOSE 8082
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "start" ]
