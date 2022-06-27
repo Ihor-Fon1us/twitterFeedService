@@ -1,0 +1,77 @@
+version: '3.5'
+
+services:
+ rabbitmq:
+   container_name: rabbitmq
+   hostname: rabbitmq
+   image: rabbitmq:3.10-management
+   ports:
+      - 5672:5672
+      - 15672:15672
+   networks:
+     - backend
+
+ cockroach1:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach1
+   hostname: cockroach1
+   ports:
+     - 26257:26257
+     - 8081:8081
+   networks:
+     - backend
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "./cockroach-data/roach1:/cockroach/cockroach-data"
+
+ cockroach2:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach2
+   hostname: cockroach2
+   networks:
+     - backend
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "./cockroach-data/roach2:/cockroach/cockroach-data" 
+
+ cockroach3:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach3
+   hostname: cockroach3
+   networks:
+     - backend
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "./cockroach-data/roach3:/cockroach/cockroach-data" 
+
+ server:
+   container_name: twitterfeedservice
+   hostname: server
+   build: 
+     context: ./app
+     dockerfile: Dockerfile
+   ports:
+    - "8080:8080"
+   expose:
+    - "8080"
+   networks:
+     - backend
+   environment:
+     - RABBITMQ_URL=amqp://rabbitmq:5672
+     - COCKROACH_URL=postgresql://root@cockroach1:26257/defaultdb?sslmode=disable
+     - PORT_SERVER=8080
+
+ bot:
+   container_name: twitterfeedservice_bot
+   build: 
+     context: ./twitterfeedservice_bot
+     dockerfile: Dockerfile
+   networks:
+     - backend
+   environment:
+     - SERVER_BASE_URL=http://server:8080
+     
+networks:
+ backend:
+   name: backend
+
