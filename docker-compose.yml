@@ -3,9 +3,23 @@ version: '3.5'
 services:
  server:
    container_name: twitterfeedservice
-   image: twitterfeedservice
+   build: 
+     context: ./app
+     dockerfile: Dockerfile
    ports:
     - "8080:8080"
+   networks:
+     - roachnet
+
+ bot:
+   container_name: twitterfeedservice_bot
+   build: 
+     context: ./twitterfeedservice_bot
+     dockerfile: Dockerfile
+   ports:
+    - "8082:8082"
+   networks:
+     - roachnet
 
  rabbitmq:
    container_name: rabbitmq
@@ -14,6 +28,8 @@ services:
    ports:
       - 5672:5672
       - 15672:15672
+   networks:
+     - roachnet
 
  cockroach1:
    image: cockroachdb/cockroach:v22.1.1
@@ -26,7 +42,7 @@ services:
      - roachnet
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "${PWD}/cockroach-data/roach1:/cockroach/cockroach-data"
+     - "./cockroach-data/roach1:/cockroach/cockroach-data"
 
  cockroach2:
    image: cockroachdb/cockroach:v22.1.1
@@ -36,7 +52,7 @@ services:
      - roachnet
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "${PWD}/cockroach-data/roach2:/cockroach/cockroach-data" 
+     - "./cockroach-data/roach2:/cockroach/cockroach-data" 
 
  cockroach3:
    image: cockroachdb/cockroach:v22.1.1
@@ -46,4 +62,8 @@ services:
      - roachnet
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "${PWD}/cockroach-data/roach3:/cockroach/cockroach-data" 
+     - "./cockroach-data/roach3:/cockroach/cockroach-data" 
+networks:
+ roachnet:
+   name: roachnet
+
