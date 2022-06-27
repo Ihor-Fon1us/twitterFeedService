@@ -3,6 +3,7 @@ version: '3.5'
 services:
  server:
    container_name: twitterfeedservice
+   hostname: server
    build: 
      context: ./app
      dockerfile: Dockerfile
@@ -10,6 +11,9 @@ services:
     - "8080:8080"
    networks:
      - roachnet
+   environment:
+     - RABBITMQ_URL=amqp://rabbitmq:5672
+     - COCKROACH_URL=postgresql://root@cockroach1:26257/defaultdb?sslmode=disable
 
  bot:
    container_name: twitterfeedservice_bot
