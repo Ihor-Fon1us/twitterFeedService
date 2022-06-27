@@ -21,21 +21,23 @@ class RABBITMQ {
   async postData(queueName, data) {
     if (!this.connection) await this.connect();
     try {
-      this.channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(data)));
+      this.channel.sendToQueue(queueName, new Buffer.From(JSON.stringify(data)));
     } catch (err) {
       console.error(err);
     }
   }
 
-  initConsumeHandler(queueName, model) {
-    this.channel.assertQueue(queueName).then(() => {
+  async initConsumeHandler(queueName, model) {
+    if (!this.connection) await this.connect();
+    try {
+      await this.channel.assertQueue(queueName);
       this.channel.consume(queueName, (msg) => {
         model.create(JSON.parse(msg.content.toString()));
         this.channel.ack(msg);
       });
-    }).catch((err) => {
-      console.log(err);
-    });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 
