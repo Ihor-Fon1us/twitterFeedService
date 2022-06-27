@@ -1,6 +1,5 @@
 const port = {
   server: process.env.PORT_SERVER || 3000,
-  bot: process.env.PORT_BOT || 3001,
 };
 
 const url = {
