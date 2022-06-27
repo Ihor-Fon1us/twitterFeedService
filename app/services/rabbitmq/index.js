@@ -21,7 +21,7 @@ class RABBITMQ {
   async postData(queueName, data) {
     if (!this.connection) await this.connect();
     try {
-      this.channel.sendToQueue(queueName, new Buffer.From(JSON.stringify(data)));
+      this.channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(data)));
     } catch (err) {
       console.error(err);
     }
