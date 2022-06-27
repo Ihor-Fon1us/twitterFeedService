@@ -54,6 +54,11 @@ services:
     - "8080:8080"
    expose:
     - "8080"
+   depends_on:
+      - rabbitmq
+      - cockroach1
+      - cockroach2
+      - cockroach3
    networks:
      - backend
    environment:
@@ -66,11 +71,24 @@ services:
    build: 
      context: ./twitterfeedservice_bot
      dockerfile: Dockerfile
+   depends_on:
+      - server
    networks:
      - backend
    environment:
      - SERVER_BASE_URL=http://server:8080
-     
+ bot1:
+   container_name: twitterfeedservice_bot1
+   build: 
+     context: ./twitterfeedservice_bot
+     dockerfile: Dockerfile
+   depends_on:
+      - server
+   networks:
+     - backend
+   environment:
+     - SERVER_BASE_URL=http://server:8080
+
 networks:
  backend:
    name: backend
