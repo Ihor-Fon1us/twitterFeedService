@@ -18,5 +18,11 @@
     "sequelize-cockroachdb": "^6.0.5"
   },
   "author": "Rakytin Ihor",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.18.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
 }
