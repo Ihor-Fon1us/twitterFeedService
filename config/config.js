@@ -1,7 +1,12 @@
 const port = {
     server: process.env.PORT || 3000,
-    cockroach: process.env.COCKROACH_PORT || 26257,
-    rabbitmq: process.env.RABBITMQ_PORT || 5672,
+    
+    
 }
 
+const url = {
+    rabbitmq: process.env.RABBITMQ_URL || "amqp://localhost:5672",
+    cockroach: process.env.COCKROACH_URL || "postgresql://root@localhost:26257/defaultdb?sslmode=disable",
+}
+module.exports.url = url;
 module.exports.port = port;

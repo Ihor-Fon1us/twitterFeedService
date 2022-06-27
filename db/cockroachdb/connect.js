@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-const { port } = require('../../config/config');
+const { url } = require('../../config/config');
 
-const sequelize = new Sequelize('postgresql://root@localhost:'+ port.cockroach +'/defaultdb?sslmode=disable');
+const sequelize = new Sequelize(url.cockroach);
  
 module.exports = sequelize;

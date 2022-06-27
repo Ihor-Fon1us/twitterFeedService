@@ -4,7 +4,7 @@ const Twitt = require('../models/twitt');
 
 const { twittSchema } = require('../models/validator/validatorSchema');
 const { validate } = require('../services/validate');
-const { sendToQueue } = require('../services/rabbitmq/send');
+const RABBITMQ = require('../services/rabbitmq/index');
 
 const hendlerGet = () => {
   return (req, res, next) => {
@@ -16,38 +16,30 @@ const hendlerGet = () => {
     
     inputStream.on('data', (data) => {
       res.write(data);
-    })/* .on('end', () => {
-      console.log('end');
-    })  */
+    });
     
     Twitt.afterCreate(function(twitt) {
-      // console.log('afterCreate');
       res.write(JSON.stringify(twitt));
-    })
+    });
   }
 }
 
-/* Twitt.create({
-      nickname: nickname,
-      text: text,
-      createdAt: createdAt
-    }).then(function(twitt) {
-      res.send(twitt);
-    }).catch(function(err) {
-      res.send(err);
-    }) */
-
 const hendlerPost = () => {
   return (req, res, next) => {
-    const data = {nickname: req.body.nickname, text: req.body.text, createdAt: new Date()}
-    sendToQueue('twitt', data);
+    const data = {
+      nickname: req.body.nickname, 
+      text: req.body.text, 
+      createdAt: new Date()
+    }
+    RABBITMQ.postData(data)
+    .then(res.send(JSON.stringify(data)));
   }
 }
 
 router.route('/posts')
-.get(hendlerGet())  // GET all posts
+.get(hendlerGet())
 
 router.route('/post')
-.post(validate(twittSchema), hendlerPost())  // POST a new post
+.post(validate(twittSchema), hendlerPost())
 
 module.exports = router;
