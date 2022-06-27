@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+ rabbitmq:
+   container_name: rabbitmq
+   hostname: rabbitmq
+   image: rabbitmq:3.10-management
+   ports:
+      - 5672:5672
+      - 15672:15672
+
+ roach1:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach1
+   hostname: cockroach1
+   ports:
+     - 26257:26257
+     - 8080:8080
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "${PWD}/cockroach-data/roach1:/cockroach/cockroach-data"
+
+ roach2:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach2
+   hostname: cockroach2
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "${PWD}/cockroach-data/roach2:/cockroach/cockroach-data" 
+
+ roach3:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach3
+   hostname: cockroach3
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "${PWD}/cockroach-data/roach3:/cockroach/cockroach-data" 
