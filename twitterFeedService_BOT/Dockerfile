@@ -1,6 +1,6 @@
 FROM node:16.14.0
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/bot
 COPY package*.json ./
 RUN npm ci
-EXPOSE 8080
+EXPOSE 8082
 CMD [ "npm", "run", "dev" ]

@@ -1,6 +1,12 @@
 version: '3.5'
 
 services:
+ server:
+   container_name: twitterfeedservice
+   image: twitterfeedservice
+   ports:
+    - "8080:8080"
+
  rabbitmq:
    container_name: rabbitmq
    hostname: rabbitmq
@@ -15,7 +21,7 @@ services:
    hostname: cockroach1
    ports:
      - 26257:26257
-     - 8080:8080
+     - 8081:8081
    networks:
      - roachnet
    command: start --insecure --join=roach1,roach2,roach3 
