@@ -16,9 +16,28 @@ services:
    ports:
      - 26257:26257
      - 8080:8080
-   command: start-single-node --insecure 
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "//c/Users/fonius/cockroach-data/roach1:/cockroach/cockroach-data"
-networks:
-  twitterfeedservice_default:
-    external: true
+     - "${PWD}/cockroach-data/roach1:/cockroach/cockroach-data"
+
+ roach2:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach2
+   hostname: cockroach2
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "${PWD}/cockroach-data/roach2:/cockroach/cockroach-data" 
+
+ roach3:
+   image: cockroachdb/cockroach:v22.1.1
+   container_name: cockroach3
+   hostname: cockroach3
+   networks:
+     - roachnet
+   command: start --insecure --join=roach1,roach2,roach3 
+   volumes:
+     - "${PWD}/cockroach-data/roach3:/cockroach/cockroach-data" 
