@@ -14,7 +14,7 @@ class RABBITMQ {
       this.channel = await this.connection.createChannel();
     } catch (err) {
       console.log(err);
-      //throw new Error('Connection failed');
+      // throw new Error('Connection failed');
     }
   }
 
@@ -33,7 +33,7 @@ class RABBITMQ {
       await this.channel.assertQueue(queueName);
       await this.channel.consume(queueName, (msg) => {
         model.create(JSON.parse(msg.content.toString()));
-        this.channel.ack(msg);
+        //this.channel.ack(msg);
       });
     } catch (err) {
       console.error(err);
