@@ -25,7 +25,7 @@ services:
      - backend
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "./cockroach-data/roach1:/cockroach/cockroach-data"
+     - "./.docker-conf/cockroach-data/roach1:/cockroach/cockroach-data"
 
  cockroach2:
    image: cockroachdb/cockroach:v22.1.1
@@ -35,7 +35,7 @@ services:
      - backend
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "./cockroach-data/roach2:/cockroach/cockroach-data" 
+     - "./.docker-conf/cockroach-data/roach2:/cockroach/cockroach-data" 
 
  cockroach3:
    image: cockroachdb/cockroach:v22.1.1
@@ -45,7 +45,7 @@ services:
      - backend
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "./cockroach-data/roach3:/cockroach/cockroach-data" 
+     - "./.docker-conf/cockroach-data/roach3:/cockroach/cockroach-data" 
 
  server:
    container_name: twitterfeedservice

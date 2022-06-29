@@ -8,7 +8,7 @@ const { validate } = require('../services/validate');
 const RABBITMQ = require('../services/rabbitmq/index');
 
 const queueName = 'twitt';
-
+RABBITMQ.connect(queueName);
 RABBITMQ.initConsumeHandler(queueName, Twitt);
 
 const handlerGet = () => (req, res) => {

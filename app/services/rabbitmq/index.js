@@ -5,13 +5,14 @@ class RABBITMQ {
   constructor() {
     this.connection = null;
     this.channel = null;
-    this.connect();
+    //this.connect();
   }
 
-  async connect() {
+  async connect(queueName) {
     try {
       this.connection = await amqp.connect(url.rabbitmq, { durable: true });
       this.channel = await this.connection.createChannel();
+      await this.channel.assertQueue(queueName);
     } catch (err) {
       console.log(err);
       // throw new Error('Connection failed');
@@ -30,8 +31,7 @@ class RABBITMQ {
   async initConsumeHandler(queueName, model) {
     if (!this.connection) await this.connect();
     try {
-      await this.channel.assertQueue(queueName);
-      await this.channel.consume(queueName, (msg) => {
+      this.channel.consume(queueName, (msg) => {
         model.create(JSON.parse(msg.content.toString()));
         //this.channel.ack(msg);
       });
