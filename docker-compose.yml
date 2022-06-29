@@ -62,23 +62,12 @@ services:
    networks:
      - backend
    environment:
-     - RABBITMQ_URL=amqp://rabbitmq:5672
+     - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
      - COCKROACH_URL=postgresql://root@cockroach1:26257/defaultdb?sslmode=disable
      - PORT_SERVER=8080
 
  bot:
    container_name: twitterfeedservice_bot
-   build: 
-     context: ./twitterfeedservice_bot
-     dockerfile: Dockerfile
-   depends_on:
-      - server
-   networks:
-     - backend
-   environment:
-     - SERVER_BASE_URL=http://server:8080
- bot1:
-   container_name: twitterfeedservice_bot1
    build: 
      context: ./twitterfeedservice_bot
      dockerfile: Dockerfile

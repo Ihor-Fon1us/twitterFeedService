@@ -14,14 +14,14 @@ class RABBITMQ {
       this.channel = await this.connection.createChannel();
     } catch (err) {
       console.log(err);
-      throw new Error('Connection failed');
+      //throw new Error('Connection failed');
     }
   }
 
   async postData(queueName, data) {
     if (!this.connection) await this.connect();
     try {
-      this.channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(data)));
+      await this.channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(data)));
     } catch (err) {
       console.error(err);
     }
@@ -31,7 +31,7 @@ class RABBITMQ {
     if (!this.connection) await this.connect();
     try {
       await this.channel.assertQueue(queueName);
-      this.channel.consume(queueName, (msg) => {
+      await this.channel.consume(queueName, (msg) => {
         model.create(JSON.parse(msg.content.toString()));
         this.channel.ack(msg);
       });
