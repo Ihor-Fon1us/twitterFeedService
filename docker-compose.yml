@@ -26,7 +26,7 @@ services:
       - cockroach3
    networks:
      - backend
-   command: start --insecure --join=roach1,roach2,roach3 && init --insecure
+   command: bash -c "cockroach start --insecure --join=roach1,roach2,roach3 && sleep 5 && cockroach init --insecure"
    volumes:
      - "./.docker-conf/cockroach-data/roach1:/cockroach/cockroach-data"
 
@@ -74,7 +74,7 @@ services:
  bot:
    container_name: twitterfeedservice_bot
    build: 
-     context: ./twitterfeedservice_bot
+     context: ./twitterseedservice_bot
      dockerfile: Dockerfile
    depends_on:
       - server
