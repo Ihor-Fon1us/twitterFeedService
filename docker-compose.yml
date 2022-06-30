@@ -5,6 +5,9 @@ services:
    container_name: rabbitmq
    hostname: rabbitmq
    image: rabbitmq:3.10-management
+   volumes:
+        - ./.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./.docker-conf/rabbitmq/log/:/var/log/rabbitmq
    ports:
       - 5672:5672
       - 15672:15672
@@ -18,11 +21,14 @@ services:
    ports:
      - 26257:26257
      - 8081:8081
+   depends_on:
+      - cockroach2
+      - cockroach3
    networks:
      - backend
-   command: start --insecure --join=roach1,roach2,roach3 
+   command: start --insecure --join=roach1,roach2,roach3 && init --insecure
    volumes:
-     - "./cockroach-data/roach1:/cockroach/cockroach-data"
+     - "./.docker-conf/cockroach-data/roach1:/cockroach/cockroach-data"
 
  cockroach2:
    image: cockroachdb/cockroach:v22.1.1
@@ -32,7 +38,7 @@ services:
      - backend
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "./cockroach-data/roach2:/cockroach/cockroach-data" 
+     - "./.docker-conf/cockroach-data/roach2:/cockroach/cockroach-data" 
 
  cockroach3:
    image: cockroachdb/cockroach:v22.1.1
@@ -42,7 +48,7 @@ services:
      - backend
    command: start --insecure --join=roach1,roach2,roach3 
    volumes:
-     - "./cockroach-data/roach3:/cockroach/cockroach-data" 
+     - "./.docker-conf/cockroach-data/roach3:/cockroach/cockroach-data" 
 
  server:
    container_name: twitterfeedservice
@@ -57,8 +63,7 @@ services:
    depends_on:
       - rabbitmq
       - cockroach1
-      - cockroach2
-      - cockroach3
+   command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node ./bin/www'
    networks:
      - backend
    environment:
@@ -68,17 +73,6 @@ services:
 
  bot:
    container_name: twitterfeedservice_bot
-   build: 
-     context: ./twitterfeedservice_bot
-     dockerfile: Dockerfile
-   depends_on:
-      - server
-   networks:
-     - backend
-   environment:
-     - SERVER_BASE_URL=http://server:8080
- bot1:
-   container_name: twitterfeedservice_bot1
    build: 
      context: ./twitterfeedservice_bot
      dockerfile: Dockerfile
