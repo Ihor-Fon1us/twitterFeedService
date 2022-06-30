@@ -8,8 +8,9 @@ const { validate } = require('../services/validate');
 const RABBITMQ = require('../services/rabbitmq/index');
 
 const queueName = 'twitt';
-RABBITMQ.connect(queueName);
-RABBITMQ.initConsumeHandler(queueName, Twitt);
+
+const rabbit = new RABBITMQ(queueName);
+rabbit.connect().then(() => rabbit.initConsumeHandler(Twitt)).catch((err) => console.log(err));
 
 const handlerGet = () => (req, res) => {
   res.setHeader('Content-Type', 'application/stream+json');
@@ -34,14 +35,18 @@ const handlerPost = () => (req, res) => {
     createdAt: new Date(),
   };
 
-  RABBITMQ.postData(queueName, data)
-    .then(res.send(JSON.stringify(data)));
+  rabbit.postData(queueName, data)
+    .then(() => res.send(JSON.stringify(data)))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+    });
 };
 
 router.route('/posts')
   .get(handlerGet());
 
 router.route('/post')
-  .post(validate(twittSchema), handlerPost());
+  .post(/* validate(twittSchema) */ handlerPost());
 
 module.exports = router;

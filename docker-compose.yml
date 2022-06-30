@@ -21,9 +21,12 @@ services:
    ports:
      - 26257:26257
      - 8081:8081
+   depends_on:
+      - cockroach2
+      - cockroach3
    networks:
      - backend
-   command: start --insecure --join=roach1,roach2,roach3 
+   command: start --insecure --join=roach1,roach2,roach3 && init --insecure
    volumes:
      - "./.docker-conf/cockroach-data/roach1:/cockroach/cockroach-data"
 
@@ -60,12 +63,11 @@ services:
    depends_on:
       - rabbitmq
       - cockroach1
-      - cockroach2
-      - cockroach3
+   command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node ./bin/www'
    networks:
      - backend
    environment:
-     - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+     - RABBITMQ_URL=amqp://rabbitmq:5672
      - COCKROACH_URL=postgresql://root@cockroach1:26257/defaultdb?sslmode=disable
      - PORT_SERVER=8080
 
